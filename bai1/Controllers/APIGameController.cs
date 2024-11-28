@@ -31,13 +31,13 @@ namespace bai1.Controllers
         private readonly IEmailService _emailService;
         public APIGameController(ApplicationDbContext db, 
                                 UserManager<ApplicationUser> userManager, 
-                                IEmailService omailService,
+                                IEmailService emailService,
                                 IConfiguration configuration)
         {
             _db = db;
             _response = new ResponseApi();
             _userManager = userManager;
-            //_emailService = emailService;
+            _emailService = emailService;
             _configuration = configuration;
         }
         [HttpGet("GetAllGameLevel")]
@@ -153,7 +153,7 @@ namespace bai1.Controllers
                     };
                     _response.IsSuccess = true;
                     _response.Notification = "Đăng nhập thành công";
-                    _response.Data = user;
+                    _response.Data = data;
                     return Ok(_response);
                 }
                 else
@@ -421,7 +421,7 @@ namespace bai1.Controllers
                 return BadRequest(_response);
             }
         }
-        [HttpPost("Forgot Password")]
+        [HttpPost("ForgotPassword")]
         public async Task<IActionResult> ForgotPassword(string Email)
         {
             try
@@ -434,17 +434,20 @@ namespace bai1.Controllers
                     _response.Data = null;
                     return BadRequest(_response);
                 }
+
                 Random random = new();
                 string OTP = random.Next(100000, 999999).ToString();
                 user.OTP = OTP;
                 await _userManager.UpdateAsync(user);
                 await _db.SaveChangesAsync();
-                string subject = "Reset Password Game 106" + Email;
-                string message = "Mã OTP của bạn là: + OTP" + OTP;
+
+                string subject = "Reset Password Game 106 -- " + Email;
+                string message = "Mã OTP của bạn là: " + OTP;
                 await _emailService.SendEmailAsync(Email, subject, message);
+
                 _response.IsSuccess = true;
                 _response.Notification = "Gửi mã OTP thành công";
-                _response.Data = "email sent to + Email" + Email;
+                _response.Data = "email sent to " + Email;
                 return Ok(_response);
             }
             catch (Exception ex)

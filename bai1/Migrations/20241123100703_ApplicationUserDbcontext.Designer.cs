@@ -12,15 +12,15 @@ using bai1.Data;
 namespace bai1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241031084427_addUserModelToDb")]
-    partial class addUserModelToDb
+    [Migration("20241123100703_ApplicationUserDbcontext")]
+    partial class ApplicationUserDbcontext
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.20")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -180,6 +180,9 @@ namespace bai1.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -197,6 +200,10 @@ namespace bai1.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("OTP")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
@@ -251,6 +258,49 @@ namespace bai1.Migrations
                     b.HasKey("LevelId");
 
                     b.ToTable("GameLevels");
+
+                    b.HasData(
+                        new
+                        {
+                            LevelId = 1,
+                            title = "Cấp độ 1"
+                        },
+                        new
+                        {
+                            LevelId = 2,
+                            title = "Cấp độ 2"
+                        },
+                        new
+                        {
+                            LevelId = 3,
+                            title = "Cấp độ 3"
+                        });
+                });
+
+            modelBuilder.Entity("bai1.Models.LevelResult", b =>
+                {
+                    b.Property<int>("QuizResultId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("QuizResultId"));
+
+                    b.Property<DateOnly>("CompletionDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("LevelId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("QuizResultId");
+
+                    b.ToTable("LevelResults");
                 });
 
             modelBuilder.Entity("bai1.Models.Question", b =>
@@ -291,6 +341,30 @@ namespace bai1.Migrations
                     b.HasKey("QuestionId");
 
                     b.ToTable("Questions");
+
+                    b.HasData(
+                        new
+                        {
+                            QuestionId = 1,
+                            Answer = "Đáp án 1",
+                            ContentQuestion = "Câu hỏi 1",
+                            Option1 = "Đáp án 1",
+                            Option2 = "Đáp án 2",
+                            Option3 = "Đáp án 3",
+                            Option4 = "Đáp án 4",
+                            levelId = 1
+                        },
+                        new
+                        {
+                            QuestionId = 2,
+                            Answer = "Đáp án 2",
+                            ContentQuestion = "Câu hỏi 2",
+                            Option1 = "Đáp án 1",
+                            Option2 = "Đáp án 2",
+                            Option3 = "Đáp án 3",
+                            Option4 = "Đáp án 4",
+                            levelId = 2
+                        });
                 });
 
             modelBuilder.Entity("bai1.Models.Region", b =>
@@ -308,6 +382,18 @@ namespace bai1.Migrations
                     b.HasKey("RegionId");
 
                     b.ToTable("Regions");
+
+                    b.HasData(
+                        new
+                        {
+                            RegionId = 1,
+                            Name = "Đồng bằng sông hồng"
+                        },
+                        new
+                        {
+                            RegionId = 2,
+                            Name = "Đồng bằng sông cửu long"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
