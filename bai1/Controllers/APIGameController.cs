@@ -573,7 +573,7 @@ namespace bai1.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
         [HttpGet("GetAllResultByUser/{userId}")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetAllResultByUser(string userId)
         {
             try
